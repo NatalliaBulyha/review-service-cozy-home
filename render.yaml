@@ -1,4 +1,15 @@
 services:
-  - name: review-service
-    buildCommand: docker build -t review-service .
-    startCommand: docker run -p 8083:8083 -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=OqTSchvip_ZH-hz7YpYwVs6Wc_Mlij -e POSTGRES_URL=jdbc:postgresql://admin:OqTSchvip_ZH-hz7YpYwVs6Wc_Mlij@us-east-1.b52152fa-97a4-4ebb-87be-812fdf65a3b0.aws.ybdb.io:5433/postgres?ssl=true&sslmode=require&sslrootcert=/etc/secrets/root.crt review-service
+  - name: review-server
+    env:
+      - key: POSTGRES_URL
+        value: jdbc:postgresql://admin:OqTSchvip_ZH-hz7YpYwVs6Wc_Mlij@us-east-1.b52152fa-97a4-4ebb-87be-812fdf65a3b0.aws.ybdb.io:5433/postgres?ssl=true&sslmode=require&sslrootcert=/etc/secrets/root.crt
+      - key: POSTGRES_USER
+        value: admin
+      - key: POSTGRES_PASSWORD
+        value: OqTSchvip_ZH-hz7YpYwVs6Wc_Mlij
+    buildCommand: mvn clean package
+    startCommand: java -jar target/review-service.jar
+    ports:
+      - port: 8083
+        name: http
+    healthCheckPath: /actuator/health
