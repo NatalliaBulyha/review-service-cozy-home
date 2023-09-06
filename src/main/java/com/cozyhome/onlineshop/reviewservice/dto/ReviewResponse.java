@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class ReviewResponse {
     private byte rating;
     private String comment;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "YYYY-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "YYYY-MM-dd")
     private LocalDateTime modifiedAt;
     private String userName;
 }
