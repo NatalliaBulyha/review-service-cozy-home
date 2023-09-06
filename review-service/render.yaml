@@ -1,18 +1,4 @@
 services:
-  - name: mongodb
-    image: mongo:latest
-    ports:
-      - port: 27017
-        name: mongodb
-  - name: cozy_home
-    env:
-      - key: SPRING_PROFILES_ACTIVE
-        value: production
-      - key: SPRING_DATA_MONGODB_URI
-        value: "mongodb+srv://user:egy4OdPi4Wyrm99k@cluster0.bgj8zvs.mongodb.net/product_db?retryWrites=true&w=majority"
-    buildCommand: mvn clean package
-    startCommand: java -jar target/product-service-0.0.1-SNAPSHOT.jar
-    ports:
-      - port: 8080
-        name: http
-    healthCheckPath: /actuator/health
+  - name: review-service
+    buildCommand: docker build -t review-service .
+    startCommand: docker run -p 8083:8083 -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=OqTSchvip_ZH-hz7YpYwVs6Wc_Mlij -e POSTGRES_URL=jdbc:postgresql://admin:OqTSchvip_ZH-hz7YpYwVs6Wc_Mlij@us-east-1.b52152fa-97a4-4ebb-87be-812fdf65a3b0.aws.ybdb.io:5433/postgres?ssl=true&sslmode=require&sslrootcert=/etc/secrets/root.crt review-service
