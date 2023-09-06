@@ -42,7 +42,7 @@ public class ReviewServiceImpl implements ReviewService{
                             .rating((byte) review.getRating())
                             .userName(review.getUserName())
                             .review(review.getComment())
-                            .data(review.getModifiedAt())
+                            .data(review.getModifiedAt().toLocalDate())
                     .build());
         }
 
