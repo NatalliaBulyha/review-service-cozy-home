@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +28,13 @@ public class ReviewServiceImpl implements ReviewService{
         Review review = mapper.map(reviewRequest, Review.class);
         review.setCreatedAt(LocalDateTime.now());
         review.setModifiedAt(LocalDateTime.now());
-        return mapper.map(repository.save(review), ReviewResponse.class);
+        Review savedReview = repository.save(review);
+        return ReviewResponse.builder()
+                .data(savedReview.getModifiedAt().toLocalDate())
+                .review(savedReview.getComment())
+                .userName(savedReview.getUserName())
+                .rating((byte) savedReview.getRating())
+                .build();
     }
 
     @Override
@@ -47,5 +54,15 @@ public class ReviewServiceImpl implements ReviewService{
         }
 
         return reviewResponses;
+    }
+
+    @Override
+    public void removeReviewById(String reviewId) {
+        repository.deleteById(UUID.fromString(reviewId));
+    }
+
+    @Override
+    public List<Review> getReviewsForProductAllInf(String productSkuCode) {
+        return repository.findReviewsByProductSkuCode(productSkuCode);
     }
 }

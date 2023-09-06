@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class ReviewResponse {
     private byte rating;
     private String review;
-    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "YYYY-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "YYYY-MM-dd")
     private LocalDate data;
     private String userName;
 }
