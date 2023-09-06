@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 @Builder
 public class ReviewResponse {
     private byte rating;
-    private String comment;
+    private String review;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "YYYY-MM-dd")
-    private LocalDateTime modifiedAt;
+    private LocalDate data;
     private String userName;
 }

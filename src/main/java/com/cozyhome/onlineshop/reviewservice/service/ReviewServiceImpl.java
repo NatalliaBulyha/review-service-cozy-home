@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,7 +32,20 @@ public class ReviewServiceImpl implements ReviewService{
 
     @Override
     public List<ReviewResponse> getReviewsForProduct(String productSkuCode) {
+        List<ReviewResponse> reviewResponses = new ArrayList<>();
         List<Review> reviews = repository.findReviewsByProductSkuCode(productSkuCode);
-        return reviews.stream().map(review -> mapper.map(review, ReviewResponse.class)).toList();
+        if (reviews.isEmpty()) {
+            return new ArrayList<>();
+        }
+        for (Review review : reviews) {
+            reviewResponses.add(ReviewResponse.builder()
+                            .rating((byte) review.getRating())
+                            .userName(review.getUserName())
+                            .review(review.getComment())
+                            .data(review.getModifiedAt().toLocalDate())
+                    .build());
+        }
+
+        return reviewResponses;
     }
 }
