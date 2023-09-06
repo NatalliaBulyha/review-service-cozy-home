@@ -11,5 +11,5 @@ services:
     startCommand: java -jar target/review-service.jar
     ports:
       - port: 8083
-        name: http
+        name: https
     healthCheckPath: /actuator/health
