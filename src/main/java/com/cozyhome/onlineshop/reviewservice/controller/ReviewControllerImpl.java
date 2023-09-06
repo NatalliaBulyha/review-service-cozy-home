@@ -1,14 +1,13 @@
 package com.cozyhome.onlineshop.reviewservice.controller;
 
+import com.cozyhome.onlineshop.reviewservice.dto.ReviewDto;
 import com.cozyhome.onlineshop.reviewservice.dto.ReviewRequest;
 import com.cozyhome.onlineshop.reviewservice.dto.ReviewResponse;
-import com.cozyhome.onlineshop.reviewservice.model.Review;
 import com.cozyhome.onlineshop.reviewservice.service.ReviewService;
 import com.cozyhome.onlineshop.reviewservice.validation.ValidSkuCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,11 +50,11 @@ public class ReviewControllerImpl {
     }
 
     @GetMapping("/admin/product")
-    public ResponseEntity<List<Review>> getReviewsForProductAllInf(@RequestParam @ValidSkuCode String productSkuCode) {
+    public ResponseEntity<List<ReviewDto>> getReviewsForProductAllInf(@RequestParam @ValidSkuCode String productSkuCode) {
         return new ResponseEntity<>(reviewService.getReviewsForProductAllInf(productSkuCode), HttpStatus.OK);
     }
 
-    @DeleteMapping
+    @PostMapping
     public ResponseEntity<Void> removeReviewById(@RequestParam String reviewId) {
         reviewService.removeReviewById(reviewId);
         return new ResponseEntity<>(HttpStatus.OK);
