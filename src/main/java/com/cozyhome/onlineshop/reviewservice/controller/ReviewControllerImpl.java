@@ -23,6 +23,16 @@ public class ReviewControllerImpl {
 
     private final ReviewService reviewService;
 
+    @GetMapping("/string")
+    public ResponseEntity<String> getString() {
+        return new ResponseEntity<>("Hi from controller!!", HttpStatus.OK);
+    }
+
+    @GetMapping("/string22")
+    public ResponseEntity<String> getString2(@RequestParam String string) {
+        return new ResponseEntity<>("Hi from controller!! " + string, HttpStatus.OK);
+    }
+
     @GetMapping
     public ResponseEntity<List<ReviewResponse>> getReviews() {
         return new ResponseEntity<>(reviewService.getReviews(), HttpStatus.OK);
