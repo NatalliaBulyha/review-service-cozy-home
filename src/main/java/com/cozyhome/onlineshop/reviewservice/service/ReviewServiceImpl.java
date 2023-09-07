@@ -1,10 +1,13 @@
 package com.cozyhome.onlineshop.reviewservice.service;
 
-import com.cozyhome.onlineshop.reviewservice.dto.ReviewDto;
+import com.cozyhome.onlineshop.reviewservice.dto.ReviewAdminResponse;
 import com.cozyhome.onlineshop.reviewservice.dto.ReviewRequest;
 import com.cozyhome.onlineshop.reviewservice.dto.ReviewResponse;
+import com.cozyhome.onlineshop.reviewservice.handler.DataNotExistException;
+import com.cozyhome.onlineshop.reviewservice.handler.DataNotFoundException;
 import com.cozyhome.onlineshop.reviewservice.model.Review;
 import com.cozyhome.onlineshop.reviewservice.repository.ReviewRepository;
+import com.cozyhome.onlineshop.reviewservice.service.builder.ReviewBuilder;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -19,13 +22,18 @@ import java.util.UUID;
 public class ReviewServiceImpl implements ReviewService{
     private final ReviewRepository repository;
     private final ModelMapper mapper;
+    private final ReviewBuilder reviewBuilder;
     @Override
     public List<ReviewResponse> getReviews() {
-        return repository.findAll().stream().map(review -> mapper.map(review, ReviewResponse.class)).toList();
+        List<Review> reviews = repository.findAll();
+        if (reviews.isEmpty()) {
+            throw new DataNotFoundException("The are no reviews.");
+        }
+        return reviews.stream().map(review -> mapper.map(review, ReviewResponse.class)).toList();
     }
 
     @Override
-    public ReviewResponse saveReview(ReviewRequest reviewRequest) {
+    public ReviewResponse addNewReview(ReviewRequest reviewRequest) {
         Review review = mapper.map(reviewRequest, Review.class);
         review.setCreatedAt(LocalDateTime.now());
         review.setModifiedAt(LocalDateTime.now());
@@ -40,30 +48,29 @@ public class ReviewServiceImpl implements ReviewService{
 
     @Override
     public List<ReviewResponse> getReviewsForProduct(String productSkuCode) {
-        List<ReviewResponse> reviewResponses = new ArrayList<>();
         List<Review> reviews = repository.findReviewsByProductSkuCode(productSkuCode);
         if (reviews.isEmpty()) {
             return new ArrayList<>();
         }
-        for (Review review : reviews) {
-            reviewResponses.add(ReviewResponse.builder()
-                            .rating((byte) review.getRating())
-                            .userName(review.getUserName())
-                            .review(review.getComment())
-                            .data(review.getModifiedAt().toLocalDate())
-                    .build());
-        }
-
-        return reviewResponses;
+        return reviewBuilder.buildReviewsResponse(reviews);
     }
 
     @Override
     public void removeReviewById(String reviewId) {
-        repository.deleteById(UUID.fromString(reviewId));
+        boolean exist = repository.existsById(UUID.fromString(reviewId));
+        if (exist) {
+            repository.deleteById(UUID.fromString(reviewId));
+        } else {
+            throw new DataNotExistException("Review with id = " + reviewId + " isn't exist.");
+        }
     }
 
     @Override
-    public List<ReviewDto> getReviewsForProductAllInf(String productSkuCode) {
-        return repository.findReviewsByProductSkuCode(productSkuCode).stream().map(review -> mapper.map(review, ReviewDto.class)).toList();
+    public List<ReviewAdminResponse> getReviewsForProductAllInf(String productSkuCode) {
+        List<Review> reviews = repository.findReviewsByProductSkuCode(productSkuCode);
+        if (reviews.isEmpty()) {
+            throw new DataNotExistException("Review for product with sku code = " + productSkuCode + " isn't exist.");
+        }
+        return reviews.stream().map(review -> mapper.map(review, ReviewAdminResponse.class)).toList();
     }
 }
