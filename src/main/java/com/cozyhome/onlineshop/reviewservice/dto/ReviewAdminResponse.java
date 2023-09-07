@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Data
 @Builder
-public class ReviewDto {
+public class ReviewAdminResponse {
     private UUID id;
     private int rating;
     private String comment;
